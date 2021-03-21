@@ -13,6 +13,7 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.athmavisionstream.utils.AppConstants;
 import com.example.athmavisionstream.utils.AudioStreaming;
 
 import butterknife.BindView;
@@ -30,7 +31,13 @@ public class MainActivity extends AppCompatActivity {
 
     private AudioStreaming audioStreamingCustomFont;
 //    String url = "http://203.24.76.112:8000/stereo";
-    String url = "http://janus.cdnstream.com:5680//stream";
+
+    //Main Link
+    String url = AppConstants.RADIO_URL;
+
+    //Updated links on 03/02/2021
+//    String url = "http://s4.radio.co/s74b13e7c4/listen.m3u";
+//    String url = "https://s4.radio.co/s74b13e7c4/listen";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

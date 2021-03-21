@@ -4,13 +4,11 @@ import android.content.*
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,9 +16,9 @@ import com.e60.mvvm.ApiResponse
 import com.e60.mvvm.MainViewModel
 import com.e60.mvvm.Status
 import com.e60.mvvm.ViewModelFactory
-import com.example.athmavisionstream.interfaces.ActionEventsAndData
 import com.example.athmavisionstream.model.StreamInfoResponse
 import com.example.athmavisionstream.services.AudioService
+import com.example.athmavisionstream.utils.AppConstants
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -38,6 +36,7 @@ class RadioPlayerActivity : AppCompatActivity(){
     private lateinit var mediaSource: MediaSource
     private lateinit var dataSourceFactory: DefaultDataSourceFactory
     var audioManager: AudioManager? = null
+    var playPauseStatus : Boolean = true
 
     private var audioService: AudioService? = null
 
@@ -147,16 +146,51 @@ class RadioPlayerActivity : AppCompatActivity(){
                 startActivity(browserIntent)
         }
 
+        img_facebook.setOnClickListener {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.FACEBOOK_URL))
+            startActivity(browserIntent)
+        }
+
+        img_spotify.setOnClickListener {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.SPOTIFY_URL))
+            startActivity(browserIntent)
+        }
+
+        img_youtube.setOnClickListener {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.YOUTUBE_URL))
+            startActivity(browserIntent)
+        }
+
         img_play.setOnClickListener {
+            playPauseStatus = false
             img_play.visibility = View.GONE
             img_pause.visibility = View.VISIBLE
             audioService!!.initiatePlayPause("play")
         }
 
         img_pause.setOnClickListener {
+            playPauseStatus = true
             img_play.visibility = View.VISIBLE
             img_pause.visibility = View.GONE
             audioService!!.initiatePlayPause("pause")
+        }
+
+        linear_play_pause.setOnClickListener {
+            if(playPauseStatus == true){
+                playPauseStatus = false
+                img_play.visibility = View.GONE
+                img_pause.visibility = View.VISIBLE
+                audioService!!.initiatePlayPause("play")
+            }
+            else{
+                playPauseStatus = true
+                img_play.visibility = View.VISIBLE
+                img_pause.visibility = View.GONE
+                audioService!!.initiatePlayPause("pause")
+            }
         }
 
 

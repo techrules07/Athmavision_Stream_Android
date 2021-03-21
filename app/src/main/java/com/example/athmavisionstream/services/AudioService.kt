@@ -14,6 +14,7 @@ import android.os.IBinder
 import androidx.annotation.Nullable
 import com.example.athmavisionstream.R
 import com.example.athmavisionstream.RadioPlayerActivity
+import com.example.athmavisionstream.utils.AppConstants
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
@@ -29,6 +30,7 @@ import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.Exception
 
 
 public class AudioService : Service() {
@@ -55,21 +57,30 @@ public class AudioService : Service() {
         super.onCreate()
         val context: Context = this
 
-        getStreamInfo("https://janus.cdnstream.com:2199/rpc/athmavis/streaminfo.get", context)
+        getStreamInfo(AppConstants.API_URL, context)
 
         h = Handler()
         r = object : Runnable {
             override fun run() {
-                Log.e("runnable","rrr")
-                getStreamInfo("https://janus.cdnstream.com:2199/rpc/athmavis/streaminfo.get", context)
+                Log.e("runnable", "rrr")
+                getStreamInfo(AppConstants.API_URL, context)
                 h.postDelayed(r, 120000)
             }
         }
         h.postDelayed(r, 120000)
 
         simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(this)
-        dataSourceFactory = DefaultDataSourceFactory(this, Util.getUserAgent(this, "exoPlayerSample"))
-        mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse("http://janus.cdnstream.com:5680//stream"))
+        dataSourceFactory = DefaultDataSourceFactory(
+            this, Util.getUserAgent(
+                this,
+                "exoPlayerSample"
+            )
+        )
+        mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
+            Uri.parse(
+                AppConstants.RADIO_URL
+            )
+        )
 
         with(simpleExoPlayer) {
             prepare(mediaSource)
@@ -102,7 +113,7 @@ public class AudioService : Service() {
     }
 
     fun initiatePlayPause(command: String){
-        Log.e("command",command)
+        Log.e("command", command)
         if(command.equals("play")){
             simpleExoPlayer.playWhenReady = true
         }
@@ -112,7 +123,7 @@ public class AudioService : Service() {
 
     }
 
-    fun showNotification(context : Context){
+    fun showNotification(context: Context){
         playerNotificationManager =
             createWithNotificationChannel(context,
                 "playback_channel", R.string.app_name, 1,
@@ -173,21 +184,21 @@ public class AudioService : Service() {
             if (playbackState == Player.STATE_READY) {
                 if (simpleExoPlayer.playWhenReady) {
                     // In Playing state
-                    Log.e("playWhenReady","play")
+                    Log.e("playWhenReady", "play")
                     val intent = Intent()
                     intent.action = MY_ACTION
                     intent.putExtra("pAction", "play")
-                    intent.putExtra("title","")
-                    intent.putExtra("artist","")
+                    intent.putExtra("title", "")
+                    intent.putExtra("artist", "")
                     sendBroadcast(intent)
                 } else {
                     // In Paused state
-                    Log.e("playWhenReady","pause")
+                    Log.e("playWhenReady", "pause")
                     val intent = Intent()
                     intent.action = MY_ACTION
                     intent.putExtra("pAction", "pause")
-                    intent.putExtra("title","")
-                    intent.putExtra("artist","")
+                    intent.putExtra("title", "")
+                    intent.putExtra("artist", "")
                     sendBroadcast(intent)
                 }
             } else if (playbackState == Player.STATE_ENDED) {
@@ -200,7 +211,7 @@ public class AudioService : Service() {
     }
 
     fun getStreamInfo(url: String, context: Context) {
-        Log.e("runnable","stream")
+        Log.e("runnable", "stream")
 //        progress.visibility = View.VISIBLE
         val request = Request.Builder()
             .url(url)
@@ -214,24 +225,38 @@ public class AudioService : Service() {
             override fun onResponse(call: Call, response: Response) {
                 var str_response = response.body()!!.string()
                 //creating json object
-                val json_contact:JSONObject = JSONObject(str_response)
+                val json_contact: JSONObject = JSONObject(str_response)
                 //creating json array
-                var jsonarray_info: JSONArray = json_contact.getJSONArray("data")
-                var i:Int = 0
-                var size:Int = jsonarray_info.length()
+//                var jsonarray_info: JSONArray = json_contact.getJSONArray("data")
+//                var i:Int = 0
+//                var size:Int = jsonarray_info.length()
 
-                Log.e("title",jsonarray_info.getJSONObject(0).getJSONObject("track").getString("title"))
+                var jsonarray_info: JSONArray = json_contact.getJSONArray("history")
 
-                title = jsonarray_info.getJSONObject(0).getJSONObject("track").getString("title")
-                artist = jsonarray_info.getJSONObject(0).getJSONObject("track").getString("artist")
+//                Log.e("title",jsonarray_info.getJSONObject(0).getString("title"))
+
+//                title = jsonarray_info.getJSONObject(0).getJSONObject("track").getString("title")
+//                artist = jsonarray_info.getJSONObject(0).getJSONObject("track").getString("artist")
+
+                try{
+                    val titleArtist = json_contact.getJSONObject("current_track").getString("title")
+                    val parts = titleArtist.split("-".toRegex()).toTypedArray()
+                    title = parts[0]
+                    artist = parts[1]
+                }catch(e: Exception){
+                    title = jsonarray_info.getJSONObject(0).getString("title")
+                    artist = jsonarray_info.getJSONObject(1).getString("title")
+                }
 
 //                showNotification(context)
 
                 val intent = Intent()
                 intent.action = MY_ACTION
                 intent.putExtra("pAction", "")
-                intent.putExtra("title",jsonarray_info.getJSONObject(0).getJSONObject("track").getString("title"))
-                intent.putExtra("artist",jsonarray_info.getJSONObject(0).getJSONObject("track").getString("artist"))
+//                intent.putExtra("title",jsonarray_info.getJSONObject(0).getJSONObject("track").getString("title"))
+//                intent.putExtra("artist",jsonarray_info.getJSONObject(0).getJSONObject("track").getString("artist"))
+                intent.putExtra("title", title)
+                intent.putExtra("artist", artist)
                 sendBroadcast(intent)
 
             }

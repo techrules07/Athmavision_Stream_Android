@@ -14,8 +14,41 @@
         android:text="athmavision.org"
         android:textColor="#338153"
         android:layout_alignParentRight="true"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:textStyle="italic|bold"/>
+
+    <LinearLayout
+        android:layout_below="@+id/txt_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/img_facebook"
+            android:layout_width="@dimen/social_icons"
+            android:layout_height="@dimen/social_icons"
+            android:src="@drawable/ic_facebook"/>
+
+        <ImageView
+            android:id="@+id/img_spotify"
+            android:layout_width="@dimen/social_icons"
+            android:layout_height="@dimen/social_icons"
+            android:layout_marginStart="@dimen/social_icons_margin"
+            android:src="@drawable/ic_podbean"/>
+
+        <ImageView
+            android:id="@+id/img_youtube"
+            android:layout_width="@dimen/social_icons"
+            android:layout_height="@dimen/social_icons"
+            android:layout_marginStart="@dimen/social_icons_margin"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_youtube"/>
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -201,24 +234,13 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="20dp">
 
-        <com.example.athmavisionstream.utils.PlayPauseView
-            android:id="@+id/play_pause_view"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_horizontal"
-            app:anim_direction="positive"
-            app:anim_duration="300"
-            app:bg_color="#278D57"
-            android:visibility="gone"
-            app:btn_color="#ffffff"
-            app:gap_width="0dp" />
 
         <LinearLayout
+            android:id="@+id/linear_play_pause"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:gravity="center"
+            android:focusable="false"
             android:layout_centerHorizontal="true"
             android:background="@drawable/circle_play_pause">
 
@@ -228,12 +250,14 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:visibility="gone"
+                android:focusable="false"
                 android:src="@drawable/ic_play" />
 
             <ImageView
                 android:id="@+id/img_pause"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:focusable="false"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_pause"
                 android:visibility="visible" />
@@ -254,5 +278,16 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v 1.2"
+        android:textSize="12dp"
+        android:includeFontPadding="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:textColor="@color/white"
+         />
 
 </RelativeLayout>
