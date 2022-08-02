@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "Phase1" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "Phase1" ]
 
 jobs:
   build:
@@ -26,3 +26,8 @@ jobs:
       run: ./gradlew clean
     - name: Build DebugAPK
       run: ./gradlew assembleDebug
+    - name: uploadAPK
+      uses: actions/upload-artifact@v1
+      with:
+        name: app
+        path: app/build/outputs/apk/debug/app-debug.apk
